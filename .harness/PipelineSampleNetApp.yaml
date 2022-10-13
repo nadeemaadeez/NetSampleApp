@@ -1,0 +1,41 @@
+pipeline:
+  name: PipelineSampleNetApp
+  identifier: PipelineSampleNetApp
+  projectIdentifier: NewProject
+  orgIdentifier: default
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: harnesseshopgitconnector
+        repoName: SampleDotNetApp
+        build: <+input>
+  stages:
+    - stage:
+        name: build
+        identifier: build
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          infrastructure:
+            type: KubernetesDirect
+            spec:
+              connectorRef: newprojectcluster
+              namespace: harness-delegate-ng
+              automountServiceAccountToken: true
+              nodeSelector: {}
+              os: Windows
+          execution:
+            steps:
+              - step:
+                  type: GitClone
+                  name: GitClone
+                  identifier: GitClone
+                  spec:
+                    connectorRef: harnesseshopgitconnector
+                    repoName: SampleDotNetApp
+                    build:
+                      type: branch
+                      spec:
+                        branch: master
